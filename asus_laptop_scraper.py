@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import pandas as pd
 
 list_of_urls = [
     'https://www.gigabyte.com/Enterprise/Server-Motherboard',
@@ -81,6 +82,15 @@ def save_to_csv(data_list, filename):
     else:
         print("No data to write to CSV.")
 
+def save_to_excel(data_list, filename):
+    if data_list:
+        df = pd.DataFrame(data_list)
+        df.to_excel(filename + '.xlsx', index=False)
+        print(f"Data has been exported to {filename}.xlsx")
+    else:
+        print("No data to write to Excel.")
+
 if __name__ == '__main__':
     start_scrape()
     save_to_csv(scraped_data, 'Gigabyte_Enterprise')
+    save_to_excel(scraped_data, 'Gigabyte_Enterprise')
