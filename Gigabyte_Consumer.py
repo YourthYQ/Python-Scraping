@@ -17,7 +17,6 @@ class ProductHandler:
         self.products_urls = products_urls
         self.headers = headers
         self.payload = payload
-        
 
     def get_total_page(self, products_url):
         """Get the total number of pages for a given product URL."""
@@ -49,18 +48,12 @@ class ProductHandler:
         return df
     
     def get_combined_data(self):
-        """Combines all product data into a single DataFrame ."""
+        """Combines all product data into a single DataFrame."""
         final_df = pd.DataFrame(columns=["Product Name", "Product URL"])
         for products_url in self.products_urls:
             df = self.get_data_from_response(products_url) 
             final_df = final_df._append(df, ignore_index=True)
         return final_df
-
-    def save_to_excel(self, dataframe, filename):
-        if not dataframe.empty:
-            dataframe.to_excel(filename + '.xlsx', index=False)
-        
-
 
 if __name__ == "__main__":
     products_urls = [
@@ -73,4 +66,5 @@ if __name__ == "__main__":
     headers = {}
     product_handler = ProductHandler(products_urls, payload, headers)
     final_df = product_handler.get_combined_data()
-    product_handler.save_to_excel(final_df, 'Gigabyte_Consumer')
+    # Return the DataFrame instead of saving it to an Excel file
+    print(final_df)

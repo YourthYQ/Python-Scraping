@@ -6,14 +6,12 @@ from urllib3.exceptions import InsecureRequestWarning
 class ResponseHandler:
     @staticmethod
     def get_response(url, headers, payload):
-
         requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
         response = requests.request("GET", url, headers=headers, data=payload, verify=False)
-
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             return soup
-    
+
 class ProductHandler:
     def __init__(self, products_urls, headers, payload):
         self.products_urls = products_urls
@@ -21,9 +19,7 @@ class ProductHandler:
         self.payload = payload
     
     def get_data_from_response(self):
-
         list_of_urls = self.products_urls
-
         scraped_data = []
         base_url = 'https://www.gigabyte.com'
         
@@ -41,8 +37,8 @@ class ProductHandler:
 
                     # Add to data output
                     scraped_data.append({
-                        'title': title,
-                        'url': base_url + url
+                        'Product Name': title,
+                        'Product URL': base_url + url
                     })
             
             # Extract products with series
@@ -55,8 +51,8 @@ class ProductHandler:
 
                     # Add to data output
                     scraped_data.append({
-                        'title': title,
-                        'url': base_url + url
+                        'Product Name': title,
+                        'Product URL': base_url + url
                     })
 
             # Find the products from next page
@@ -65,15 +61,7 @@ class ProductHandler:
                 next_url = base_url + next_page['href']
                 list_of_urls.append(next_url)
 
-        return scraped_data
-
-    def save_to_excel(self, data_list, filename):
-        if data_list:
-            df = pd.DataFrame(data_list)
-            df.to_excel(filename + '.xlsx', index=False)
-            print(f"Data has been exported to {filename}.xlsx")
-        else:
-            print("No data to write to Excel.")
+        return pd.DataFrame(scraped_data)
 
 if __name__ == "__main__":
     products_urls = [
@@ -87,6 +75,5 @@ if __name__ == "__main__":
     payload = {}
     headers = {}
     product_handler = ProductHandler(products_urls, payload, headers)
-
-    scraped_data_list = product_handler.get_data_from_response()
-    product_handler.save_to_excel(scraped_data_list, 'Gigabyte_Enterprise')
+    final_df = product_handler.get_data_from_response()
+    print(final_df)
